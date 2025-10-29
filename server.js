@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 3000;
 // Controllers
 const testJwtRouter = require('./controllers/test-jwt');
 const authCtrl = require('./controllers/auth');
+const usersCtrl = require('./controllers/users');
+
+// MiddleWare
+const verifyToken = require('./middleware/verify-token');
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -24,9 +28,13 @@ app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
 
-// Routes go here
+// Public
 app.use('/auth', authCtrl);
 app.use('/test-jwt', testJwtRouter);
+
+// Protected Routes
+app.use(verifyToken);
+app.use('/users', usersCtrl);
 
 app.listen(PORT, () => {
   console.log('The express app is ready!');
