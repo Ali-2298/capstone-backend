@@ -27,10 +27,38 @@ router.post('/sign-up', async (req, res) => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    res.json({ token });
+    res.json({ token, user: newUser });
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: 'Something went wrong!' });
+  }
+});
+
+router.post('/sign-in', async (req, res) => {
+  try {
+    const userInDatabase = await User.findOne({ username: req.body.username });
+
+    if (!userInDatabase) {
+      return res.status(401).json({ err: 'Username or Password is invalid' });
+    }
+
+    const validPassword = bcrypt.compareSync(req.body.password, userInDatabase.hashedPassword);
+
+    if (!validPassword) {
+      return res.status(401).json({ err: 'Username or Password is invalid' });
+    }
+
+    const payload = {
+      username: userInDatabase.username,
+      _id: userInDatabase._id,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+    res.json({ token, user: userInDatabase });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: 'Invalid Username or Password' });
   }
 });
 
