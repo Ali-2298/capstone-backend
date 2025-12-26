@@ -6,6 +6,10 @@ const backlogSchema = mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   type: {
     type: String,
     enum: ['Movie', 'Series', 'Game'],

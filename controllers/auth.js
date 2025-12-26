@@ -7,13 +7,11 @@ const router = express.Router();
 
 router.post('/sign-up', async (req, res) => {
   try {
-    const userInDatabase = await User.findOne({ 
-      $or: [{ username: req.body.username }, { email: req.body.email }] 
-    });
+    const userInDatabase = await User.findOne({ username: req.body.username });
 
     if (userInDatabase) {
       return res.status(409).json({
-        err: 'Username or Email already exists',
+        err: 'Username already exists',
       });
     }
 
